@@ -33,7 +33,7 @@ public class Assignment1 {
 		}
 	}
 	
-	public static void main(String args[]){
+	public static void main(String args[]) throws FileNotFoundException, IOException{
 		int choice; 
 		
 		System.out.println("Enter You Choice : 1. Console 2. Input File");
