@@ -1,4 +1,9 @@
+import java.io.BufferedReader;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Assignment1 {
 	public static void console_input()
@@ -11,12 +16,21 @@ public class Assignment1 {
 		for(int i = 0 ; i < m ; i ++)
 		{
 			//doubt
+			
 		}
 		
 	}
-	public static void input_file()
+	public static void input_file() throws FileNotFoundException, IOException
 	{
-		
+		String file = "";
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		    String line;
+		    
+		    while ((line = br.readLine()) != null) {
+		    	int foo = Integer.parseInt(line);
+		    }
+		    
+		}
 	}
 	
 	public static void main(String args[]){
@@ -31,6 +45,8 @@ public class Assignment1 {
 			console_input();
 			break;
 		case 2: 
+			
+			
 			input_file();
 			break;
 		default: 
