@@ -74,7 +74,7 @@ void dijkstra(int graph[][], int src)
 		//System.out.println("Enter the number of vertices");
 		Scanner Input = new Scanner(System.in);
 		int n = Input.nextInt();
-		int adj_m[][] = new int[n][n];
+		int adj_m[][] = new int[n+1][n+1];
 		for(int i = 0 ; i < n ; i ++ )
 		{
 			for(int j = 0 ; j < n ; j ++)
@@ -83,22 +83,17 @@ void dijkstra(int graph[][], int src)
 			}
 		}
 		
-		String sample = "1:2:30 1:3:15 2:3:10 2:4:25 3:4:10 3:6:50 4:5:1 5:6:5";
+		String sample = "1:2:3 1:3:5 2:3:7 2:4:8 3:4:1 3:6:5 4:5:1 5:6:5";
 		String[] inp = sample.split(" ");
-		HashMap <Integer, Integer> Adj1 = new HashMap<Integer,Integer>();
+		//HashMap <Integer, Integer> Adj1 = new HashMap<Integer,Integer>();
 		for(int i=0;i<inp.length;i++)
 		{
 			String[] spl = inp[i].split(":");
-			Adj1.put(Integer.parseInt(spl[1]), Integer.parseInt(spl[2]));
-			Adj.put(Integer.parseInt(spl[0]), Adj1);
+			
+			adj_m[Integer.parseInt(spl[0])][Integer.parseInt(spl[1])] = Integer.parseInt(spl[2]);
 			
 		}
-		for (int key : Adj.keySet())
-		{
-			for(int key2 : Adj.get(key).keySet())
-			{
-				adj_m[key][key2] = Adj.get(key).get(key2);
-			}
-		}
+		Djikstra t = new Djikstra();
+        t.dijkstra(adj_m, 1);
 		
 	}}
