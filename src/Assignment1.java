@@ -1,6 +1,8 @@
 import java.awt.List;
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -17,10 +19,10 @@ public class Assignment1 {
 
 	public static int citiesCount;
 	public static Node nodes[];
+	public static PriorityQueue<Node> nodesQueue;
+
 	public static int linksCount;
 	public static int newLinksCount;
-
-	// static PriorityQueue<Links> linksQueue;
 
 	public static void djikstra(int source, int destination) {
 		ArrayList<Integer> nodesList = new ArrayList<Integer>();
@@ -28,33 +30,50 @@ public class Assignment1 {
 		int dist[] = new int[citiesCount];
 		int prev[] = new int[citiesCount];
 		int vertexSet[] = new int[citiesCount];
-
+		
+		
+		nodesQueue = new PriorityQueue<Node>(citiesCount, new Comparator<Node>(){
+												public int compare(Node node1, Node node2){
+													return (node1.distanceFromSource <= node2.distanceFromSource ? -1 : 1);
+											}});
+		
 		for (int i = 0; i < citiesCount; i++) {
 			dist[i] = Integer.MAX_VALUE;	//distance from source to i;
 			prev[i] = -1;					//previous node in optimal path from source
 			
-			nodesList.add(i);
+			nodesQueue.add(nodes[i]);		//Add with priority
 		}
 		
 		dist[source] = 0;
 		
-		while(nodesList.size() != 0){
-			int u = 0;//Lowest value of of dist array
-			//Remove u from nodeList;
+		while(nodesQueue.size() != 0){
+			Node temp = nodesQueue.poll();	//Lowest value of of dist array
 			
 			//Find all neighbours of u = vs, v[]
-			
-			for(i = 0; i < vs; i++){
-				
+			for(HashMap.Entry<Integer, Integer> entry : temp.links.entrySet()) {
+			    int key = entry.getKey();
+			    int value = entry.getValue();
+			    
+			    int tempDistance = dist[temp.value] + value;
+			    
+			    if(tempDistance < dist[key]){
+			    	dist[key] = tempDistance;
+			    	prev[key] = temp.value;
+			    	
+			    	boolean ret = nodesQueue.remove(nodes[key]);
+			    	if(ret){
+			    		nodes[key].setDistanceFromSource(tempDistance);
+			    		nodesQueue.add(nodes[key]);
+			    	}
+			    }
 			}
-			
-			nodesList.remove(u);
 		}
-
+		
+		System.out.println(Arrays.toString(prev));
 	}
 
 	// TODO
-	public static void console_input() {
+	public static void input_console() {
 		Scanner a = new Scanner(System.in);
 		int m, n;
 		// System.out.println();
@@ -68,8 +87,6 @@ public class Assignment1 {
 	}
 
 	public static void input_file() {
-		// Map<List,Integer> hm = new HashMap<List, Integer>();
-
 		String file = "sample.txt";
 		int allLinks[][] = null;
 		int allNewLinks[][] = null;
@@ -87,6 +104,8 @@ public class Assignment1 {
 			tempString = br.readLine();
 			citiesCount = Integer.parseInt(tempString);
 			nodes = new Node[citiesCount];
+			for(int i = 0; i < citiesCount; i++)
+				nodes[i] = new Node(i);
 
 			// Read number of links
 			tempString = br.readLine();
@@ -107,7 +126,7 @@ public class Assignment1 {
 				allLinks[i][2] = Integer.parseInt(inps[2]);
 				
 				//Populating nodes objects
-				nodes[Integer.parseInt(inps[0])].addLink(Integer.parseInt(inps[1]), Integer.parseInt(inps[2]));
+				nodes[allLinks[i][0]].addLink(allLinks[i][1], allLinks[i][2]);
 			}
 
 			// Read number of new links
@@ -137,7 +156,7 @@ public class Assignment1 {
 
 	@SuppressWarnings("resource")
 	public static void main(String args[]) {
-		int choice;
+		int choice,src,dest;
 
 		System.out.println("Enter You Choice : 1. Console 2. Input File");
 		Scanner a = new Scanner(System.in);
@@ -145,11 +164,18 @@ public class Assignment1 {
 
 		switch (choice) {
 			case 1:
-				console_input();
+				input_console();
 				break;
 	
 			case 2:
 				input_file();
+				
+				System.out.print( "Enter source node : ");
+				src = a.nextInt();
+				System.out.print( "Enter dest node : ");
+				dest = a.nextInt();
+				
+				djikstra(src, dest);
 				break;
 	
 			default:

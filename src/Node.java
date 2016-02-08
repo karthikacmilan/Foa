@@ -8,8 +8,8 @@ public class Node {
 	//public ArrayList<Integer> nodes;
 	public HashMap<Integer, Integer> links;
 	
-	public Node(){
-		this.value = -1;
+	public Node(int nodeValue){
+		this.value = nodeValue;
 		this.distanceFromSource = -1;
 		links = new HashMap<Integer, Integer>();
 	}
