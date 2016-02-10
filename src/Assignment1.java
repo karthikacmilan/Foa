@@ -18,8 +18,7 @@ import org.w3c.dom.NodeList;
 public class Assignment1 {
 	public static int citiesCount;
 	public static Node nodes[];
-	public static PriorityQueue<Node> nodesQueue;
-
+	
 	public static int linksCount;
 	public static int newLinksCount;
 
@@ -30,7 +29,7 @@ public class Assignment1 {
 		int prev[] = new int[citiesCount];
 		int vertexSet[] = new int[citiesCount];
 		
-		nodesQueue = new PriorityQueue<Node>(citiesCount, new Comparator<Node>(){
+		PriorityQueue<Node> nodesQueue = new PriorityQueue<Node>(citiesCount, new Comparator<Node>(){
 												public int compare(Node node1, Node node2){
 													return (node1.distanceFromSource <= node2.distanceFromSource ? -1 : 1);
 											}});
@@ -51,20 +50,19 @@ public class Assignment1 {
 			
 			//Find all neighbours of u = vs, v[]
 			for(HashMap.Entry<Integer, Link> entry : temp.links.entrySet()) {
-				
 			    int key = entry.getKey();
-			    int value = entry.getValue().getValue();
+			    Link value = entry.getValue();
 			    
-			    int tempDistance = dist[temp.value] + value;
+			    int tempDistance = dist[temp.value] + value.value;
 			    
-			    if(tempDistance < dist[key] /*&& temp.flag + (temp.value,key) <= 1*/){
+			    if(tempDistance < dist[key] && (temp.flag + value.status <= 1)){
 			    	dist[key] = tempDistance;
 			    	prev[key] = temp.value;
 			    	
 			    	boolean ret = nodesQueue.remove(nodes[key]);
 			    	if(ret){
 			    		nodes[key].setDistanceFromSource(tempDistance);
-			    		nodes[key].flag = temp.flag + 0; //change to 0 or 1
+			    		nodes[key].flag = temp.flag + value.status; //change to 0 or 1
 			    		nodesQueue.add(nodes[key]);
 			    	}
 			    }
@@ -84,7 +82,6 @@ public class Assignment1 {
 		}
 		
 		System.out.println(listArray.toString());
-		
 		
 	}
 
@@ -106,6 +103,7 @@ public class Assignment1 {
 		String file = "sample_2.txt";
 		int allLinks[][] = null;
 		int allNewLinks[][] = null;
+		int n1, n2, length;
 
 		// Read the text file name from user
 		System.out.println("Enter test file name (e.g. sample.txt) : ");
@@ -128,7 +126,6 @@ public class Assignment1 {
 			linksCount = Integer.parseInt(tempString);
 
 			// Initialize queue of links
-			// linksQueue = new PriorityQueue<Links>(linksCount);
 			allLinks = new int[linksCount][3];
 
 			// Iterate through each link
@@ -137,12 +134,12 @@ public class Assignment1 {
 				inps = tempString.split(":");
 
 				//Populating matrix -- Remove later
-				allLinks[i][0] = Integer.parseInt(inps[0]);
-				allLinks[i][1] = Integer.parseInt(inps[1]);
-				allLinks[i][2] = Integer.parseInt(inps[2]);
+				n1 = Integer.parseInt(inps[0]);
+				n2 = Integer.parseInt(inps[1]);
+				length = Integer.parseInt(inps[2]);
 				
 				//Populating nodes objects
-				nodes[allLinks[i][0]].addLink(allLinks[i][1], allLinks[i][2]);
+				nodes[n1].addLink(n2, length);
 			}
 
 			// Read number of new links
@@ -156,11 +153,11 @@ public class Assignment1 {
 				tempString = br.readLine();
 				inps = tempString.split(":");
 
-				allNewLinks[i][0] = Integer.parseInt(inps[0]);
-				allNewLinks[i][1] = Integer.parseInt(inps[1]);
-				allNewLinks[i][2] = Integer.parseInt(inps[2]);
+				n1 = Integer.parseInt(inps[0]);
+				n2 = Integer.parseInt(inps[1]);
+				length = Integer.parseInt(inps[2]);
 				
-				nodes[allLinks[i][0]].addNewLink(allLinks[i][1], allLinks[i][2]);
+				nodes[n1].addNewLink(n2, length);
 			}
 
 		} catch (FileNotFoundException e) {
@@ -193,7 +190,16 @@ public class Assignment1 {
 				System.out.print( "Enter dest node : ");
 				dest = a.nextInt();
 				
+				//With old link
 				djikstra(src, dest);
+				
+				//With old and new links
+				for(int i = 0; i < citiesCount; i++){
+					nodes[i].mergeLinks();
+					nodes[i].distanceFromSource = Integer.MAX_VALUE;
+				}
+				djikstra(src, dest);
+				
 				break;
 	
 			default:

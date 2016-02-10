@@ -44,14 +44,14 @@ public class Node {
 		newLinks.put(toNode, newLink);
 	}
 	
-	/*
+	
 	public void mergeLinks(){
 		//Iterate through each new link
-		for(HashMap.Entry<Integer, Integer> entry : newLinks.entrySet()){
+		for(HashMap.Entry<Integer, Link> entry : newLinks.entrySet()){
 			//check if key exists
 			if(links.containsKey((entry.getKey()))){
 				//Check if value is lower, ignore if higher
-				if(entry.getValue() < links.get(entry.getKey()))
+				if(entry.getValue().getValue() < links.get(entry.getKey()).getValue())
 					links.put(entry.getKey(), entry.getValue());
 			}
 			//if key doesnt exist
@@ -60,7 +60,7 @@ public class Node {
 			}
 		}
 	}
-	*/
+	
 	
 	
 	/*
