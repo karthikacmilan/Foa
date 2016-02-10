@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 import org.w3c.dom.NodeList;
 
 public class Assignment1 {
-
 	public static int citiesCount;
 	public static Node nodes[];
 	public static PriorityQueue<Node> nodesQueue;
@@ -31,11 +30,12 @@ public class Assignment1 {
 		int prev[] = new int[citiesCount];
 		int vertexSet[] = new int[citiesCount];
 		
-		
 		nodesQueue = new PriorityQueue<Node>(citiesCount, new Comparator<Node>(){
 												public int compare(Node node1, Node node2){
 													return (node1.distanceFromSource <= node2.distanceFromSource ? -1 : 1);
 											}});
+		
+		nodes[source].distanceFromSource = 0;
 		
 		for (int i = 0; i < citiesCount; i++) {
 			dist[i] = Integer.MAX_VALUE;	//distance from source to i;
@@ -50,19 +50,21 @@ public class Assignment1 {
 			Node temp = nodesQueue.poll();	//Lowest value of of dist array
 			
 			//Find all neighbours of u = vs, v[]
-			for(HashMap.Entry<Integer, Integer> entry : temp.links.entrySet()) {
+			for(HashMap.Entry<Integer, Link> entry : temp.links.entrySet()) {
+				
 			    int key = entry.getKey();
-			    int value = entry.getValue();
+			    int value = entry.getValue().getValue();
 			    
 			    int tempDistance = dist[temp.value] + value;
 			    
-			    if(tempDistance < dist[key]){
+			    if(tempDistance < dist[key] /*&& temp.flag + (temp.value,key) <= 1*/){
 			    	dist[key] = tempDistance;
 			    	prev[key] = temp.value;
 			    	
 			    	boolean ret = nodesQueue.remove(nodes[key]);
 			    	if(ret){
 			    		nodes[key].setDistanceFromSource(tempDistance);
+			    		nodes[key].flag = temp.flag + 0; //change to 0 or 1
 			    		nodesQueue.add(nodes[key]);
 			    	}
 			    }
@@ -70,6 +72,20 @@ public class Assignment1 {
 		}
 		
 		System.out.println(Arrays.toString(prev));
+		System.out.println(Arrays.toString(dist));
+		
+		int reached = destination;
+		ArrayList<Integer> listArray = new ArrayList<Integer>();
+		
+		listArray.add(0, reached);
+		while(reached != source){
+			listArray.add(0, prev[reached]);
+			reached = prev[reached];
+		}
+		
+		System.out.println(listArray.toString());
+		
+		
 	}
 
 	// TODO
@@ -87,7 +103,7 @@ public class Assignment1 {
 	}
 
 	public static void input_file() {
-		String file = "sample.txt";
+		String file = "sample_2.txt";
 		int allLinks[][] = null;
 		int allNewLinks[][] = null;
 
@@ -143,6 +159,8 @@ public class Assignment1 {
 				allNewLinks[i][0] = Integer.parseInt(inps[0]);
 				allNewLinks[i][1] = Integer.parseInt(inps[1]);
 				allNewLinks[i][2] = Integer.parseInt(inps[2]);
+				
+				nodes[allLinks[i][0]].addNewLink(allLinks[i][1], allLinks[i][2]);
 			}
 
 		} catch (FileNotFoundException e) {

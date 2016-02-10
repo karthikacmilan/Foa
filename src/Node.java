@@ -5,13 +5,17 @@ import java.util.HashMap;
 public class Node {
 	public int value;
 	public int distanceFromSource;
+	public int flag;
 	//public ArrayList<Integer> nodes;
-	public HashMap<Integer, Integer> links;
+	public HashMap<Integer, Link> links;
+	public HashMap<Integer, Link> newLinks;
 	
 	public Node(int nodeValue){
 		this.value = nodeValue;
-		this.distanceFromSource = -1;
-		links = new HashMap<Integer, Integer>();
+		this.distanceFromSource = Integer.MAX_VALUE;
+		this.flag = 0;
+		links = new HashMap<Integer, Link>();
+		newLinks = new HashMap<Integer, Link>();
 	}
 	
 	public int getValue() {
@@ -30,10 +34,36 @@ public class Node {
 		this.distanceFromSource = distanceFromSource;
 	}
 	
-	public void addLink(int node, int length){
-		links.put(node, length);
+	public void addLink(int toNode, int length){
+		Link newLink = new Link(length, 0);
+		links.put(toNode, newLink);
 	}
 	
+	public void addNewLink(int toNode, int length){
+		Link newLink = new Link(length, 1);
+		newLinks.put(toNode, newLink);
+	}
+	
+	/*
+	public void mergeLinks(){
+		//Iterate through each new link
+		for(HashMap.Entry<Integer, Integer> entry : newLinks.entrySet()){
+			//check if key exists
+			if(links.containsKey((entry.getKey()))){
+				//Check if value is lower, ignore if higher
+				if(entry.getValue() < links.get(entry.getKey()))
+					links.put(entry.getKey(), entry.getValue());
+			}
+			//if key doesnt exist
+			else{
+				links.put(entry.getKey(), entry.getValue());
+			}
+		}
+	}
+	*/
+	
+	
+	/*
 	public int getClosestNode(){
 		int closest = -1;		
 		int min = Integer.MAX_VALUE;
@@ -52,5 +82,6 @@ public class Node {
 		return closest;
 		
 	}
+	*/
 
 }
