@@ -6,7 +6,6 @@ public class Node {
 	public int value;
 	public int distanceFromSource;
 	public int flag;
-	//public ArrayList<Integer> nodes;
 	public HashMap<Integer, Link> links;
 	public HashMap<Integer, Link> newLinks;
 	
@@ -61,27 +60,4 @@ public class Node {
 		}
 	}
 	
-	
-	
-	/*
-	public int getClosestNode(){
-		int closest = -1;		
-		int min = Integer.MAX_VALUE;
-		int key, value;
-		
-		for (HashMap.Entry<Integer, Integer> entry : links.entrySet()) {
-		    key = entry.getKey();
-		    value = entry.getValue();
-		    
-		    if(value < min){
-		    	closest = key;
-		    	min = value;
-		    }
-		}
-		
-		return closest;
-		
-	}
-	*/
-
 }

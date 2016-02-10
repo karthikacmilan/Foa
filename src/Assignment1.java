@@ -23,11 +23,8 @@ public class Assignment1 {
 	public static int newLinksCount;
 
 	public static void djikstra(int source, int destination) {
-		ArrayList<Integer> nodesList = new ArrayList<Integer>();
-		int shortestPath[];
 		int dist[] = new int[citiesCount];
 		int prev[] = new int[citiesCount];
-		int vertexSet[] = new int[citiesCount];
 		
 		PriorityQueue<Node> nodesQueue = new PriorityQueue<Node>(citiesCount, new Comparator<Node>(){
 												public int compare(Node node1, Node node2){
@@ -100,7 +97,7 @@ public class Assignment1 {
 	}
 
 	public static void input_file() {
-		String file = "sample_2.txt";
+		String file = "sample.txt";
 		int allLinks[][] = null;
 		int allNewLinks[][] = null;
 		int n1, n2, length;
