@@ -1,6 +1,8 @@
-
+/*
+ * Class to represent a Link in the graph
+ */
 public class Link {
-	public int value;
+	public int value;	//Lenght of the links
 	public int status;	//0 for old, 1 for new link
 	
 	public Link(int value_p, int status_p){

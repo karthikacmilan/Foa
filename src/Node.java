@@ -1,13 +1,14 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 
-
+/*
+ * Class to represent a node in the graph
+ */
 public class Node {
-	public int value;
-	public int distanceFromSource;
-	public int flag;
-	public HashMap<Integer, Link> links;
-	public HashMap<Integer, Link> newLinks;
+	public int value;							//node number
+	public int distanceFromSource;				//nodes distance from source
+	public int flag;							//number of new links used
+	public HashMap<Integer, Link> links;		//hash map of links from this node
+	public HashMap<Integer, Link> newLinks;		//hash map of new links from this node
 	
 	public Node(int nodeValue){
 		this.value = nodeValue;
@@ -43,7 +44,9 @@ public class Node {
 		newLinks.put(toNode, newLink);
 	}
 	
-	
+	/* 
+	 * Function to merge the new links into the old links hash map
+	 */
 	public void mergeLinks(){
 		//Iterate through each new link
 		for(HashMap.Entry<Integer, Link> entry : newLinks.entrySet()){
