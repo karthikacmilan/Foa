@@ -21,6 +21,9 @@ public class Assignment1 {
 	
 	public static int linksCount;
 	public static int newLinksCount;
+	
+	public static int newNode1, newNode2, newLength;
+	public static int lowNode1, lowNode2, lowLength;
 
 	public static void djikstra(boolean isNew) {
 		int dist[] = new int[citiesCount];
@@ -31,23 +34,25 @@ public class Assignment1 {
 													return (node1.distanceFromSource <= node2.distanceFromSource ? -1 : 1);
 											}});
 		
-		FibonacciHeap<Node> fibQueue = new FibonacciHeap<Node>();
-		
-		nodes[source].distanceFromSource = 0;
+		//nodes[source].distanceFromSource = 0;
 		
 		for (int i = 0; i < citiesCount; i++) {
 			dist[i] = Integer.MAX_VALUE;	//distance from source to i;
 			prev[i] = -1;					//previous node in optimal path from source
 			
+			if(i == source){
+				nodes[source].distanceFromSource = 0;
+			}else{
+				nodes[i].distanceFromSource = Integer.MAX_VALUE;
+			}
+			
 			nodesQueue.add(nodes[i]);		//Add with priority
-			fibQueue.enqueue(nodes[i], nodes[i].getDistanceFromSource());
 		}
 		
 		dist[source] = 0;
 		
 		while(nodesQueue.size() != 0){
 			Node temp = nodesQueue.poll();	//Lowest value of of dist array
-			Node tempFib = fibQueue.dequeueMin().getValue();
 			
 			//Find all neighbours of u = vs, v[]
 			for(HashMap.Entry<Integer, Link> entry : temp.links.entrySet()) {
@@ -68,42 +73,33 @@ public class Assignment1 {
 			    		nodesQueue.add(nodes[key]);
 			    	}
 			    	
-			    	/*
-			    	//Reduce priority - FH
-			    	nodes[key].setDistanceFromSource(tempDistance);
-			    	nodes[key].flag = temp.flag + value.status; //change to 0 or 1
-			    	
-			    	FibonacciHeap.Entry<Node> updateEntry = new FibonacciHeap.Entry<Node>(nodes[key], tempDistance);
-			    	
-			    	fibQueue.g
-			    	fibQueue.decreaseKey(updateEntry, (double)tempDistance);
-			    	fibQueue.
-			    	*/
 			    }
 			}
 		}
-		
-		System.out.println("Src-" + source + " Dest-" + destination);
-		System.out.println(Arrays.toString(prev));
-		System.out.println(Arrays.toString(dist));
 		
 		int reached = destination;
 		ArrayList<Integer> listArray = new ArrayList<Integer>();
 		
 		listArray.add(0, reached);
+		boolean flag = true;
 		while(reached != source){
 			if(isNew){
 				Link isPresent = nodes[prev[reached]].newLinks.get(reached);
-				if(isPresent != null){
-					System.out.println("New Link used (" + prev[reached] + "," + reached + ")");
+				if(isPresent != null){					
+					newNode1 = prev[reached];
+					newNode2 = reached;
+					newLength = dist[destination];
+					
+					flag = false;
 				}
 			}
-			
 			listArray.add(0, prev[reached]);
 			reached = prev[reached];
 		}
 		
-		System.out.println(listArray.toString());
+		if(isNew == false){
+			System.out.println("Shortest path considering only old links" + listArray.toString());
+		}
 		
 	}
 
@@ -113,7 +109,6 @@ public class Assignment1 {
 	public static void input_console() throws IOException {
 		String tempString;
 		String[] inps = new String[3];
-		//Scanner a = new Scanner(System.in);
 		int n1, n2, length;
 		BufferedReader screenReader = new BufferedReader(new InputStreamReader(System.in));
 		
@@ -255,7 +250,13 @@ public class Assignment1 {
 	@SuppressWarnings("resource")
 	public static void main(String args[]) {
 		int choice;
+		int prevNode1, prevNode2;
 
+		prevNode1 = lowNode1 = newNode1 = -1;
+		prevNode2 = lowNode2 = newNode2 = -1;
+		newLength = -1;
+		lowLength = Integer.MAX_VALUE;
+		
 		try{
 			System.out.println("Enter You Choice : 1. Console 2. Input File");
 			Scanner a = new Scanner(System.in);
@@ -264,33 +265,104 @@ public class Assignment1 {
 			switch (choice) {
 				case 1:
 					input_console();
+					System.out.println("Src-" + source + " Dest-" + destination);
 
 					//With old link
 					djikstra(false);
 					
 					//With old and new links
 					for(int i = 0; i < citiesCount; i++){
-						nodes[i].mergeLinks();
-						nodes[i].distanceFromSource = Integer.MAX_VALUE;
+						//nodes[i].mergeLinks();
+						
+						for(HashMap.Entry<Integer, Link> entry : nodes[i].newLinks.entrySet()){
+							//check if key exists
+							if(nodes[i].links.containsKey((entry.getKey()))){
+								//Check if value is lower, ignore if higher
+								if(entry.getValue().getValue() < nodes[i].links.get(entry.getKey()).getValue())
+									nodes[i].links.put(entry.getKey(), entry.getValue());
+							}
+							//if key doesnt exist
+							else{
+								nodes[i].links.put(entry.getKey(), entry.getValue());
+							}
+						}
+						
+						
+						djikstra(true);
+						
+						//Check if we got a new node
+						if((prevNode1 != newNode1 && prevNode2 != newNode2)){
+							prevNode1 = newNode1;
+							prevNode2 = newNode1;
+							
+							if(newLength < lowLength){
+								lowNode1 = newNode1;
+								lowNode2 = newNode2;
+								lowLength = newLength;
+							}
+							
+							System.out.println("New link which reduces length (" + newNode1 + "," + newNode2 + ")" + " and new path length " + newLength);
+						}
 					}
 					
-					djikstra(true);
-
+					if(lowNode1 != -1){
+						System.out.println("New link which reduces length the max (" + lowNode1 + "," + lowNode2 + ")");
+					}else{
+						System.out.println("No new link reduces the path");
+					}
+						
 					break;
 		
 				case 2:
 					input_file();
+					System.out.println("Src-" + source + " Dest-" + destination);
 	
 					//With old link
 					djikstra(false);
 					
 					//With old and new links
 					for(int i = 0; i < citiesCount; i++){
-						nodes[i].mergeLinks();
-						nodes[i].distanceFromSource = Integer.MAX_VALUE;
+						//nodes[i].mergeLinks();
+						
+						for(HashMap.Entry<Integer, Link> entry : nodes[i].newLinks.entrySet()){
+							//check if key exists
+							if(nodes[i].links.containsKey((entry.getKey()))){
+								//Check if value is lower, ignore if higher
+								if(entry.getValue().getValue() < nodes[i].links.get(entry.getKey()).getValue())
+									nodes[i].links.put(entry.getKey(), entry.getValue());
+							}
+							//if key doesnt exist
+							else{
+								nodes[i].links.put(entry.getKey(), entry.getValue());
+							}
+						}
+						
+						//nodes[destination].distanceFromSource = Integer.MAX_VALUE;
+						
+						djikstra(true);
+						
+						//Check if we got a new node
+						if((prevNode1 != newNode1 && prevNode2 != newNode2)){
+							prevNode1 = newNode1;
+							prevNode2 = newNode1;
+							
+							if(newLength < lowLength){
+								lowNode1 = newNode1;
+								lowNode2 = newNode2;
+								lowLength = newLength;
+							}
+							
+							System.out.println("New link which reduces length (" + newNode1 + "," + newNode2 + ")");
+						}
 					}
 					
-					djikstra(true);
+					if(lowNode1 != -1){
+						System.out.println("New link which reduces length the max (" + lowNode1 + "," + lowNode2 + ")");
+					}else{
+						System.out.println("No new link reduces the path");
+					}
+						
+					//djikstra(true);
 					break;
 		
 				default:

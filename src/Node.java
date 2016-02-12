@@ -44,6 +44,7 @@ public class Node {
 		newLinks.put(toNode, newLink);
 	}
 	
+	
 	/* 
 	 * Function to merge the new links into the old links hash map
 	 */
@@ -62,5 +63,5 @@ public class Node {
 			}
 		}
 	}
-	
+		
 }
