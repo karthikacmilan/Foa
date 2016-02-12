@@ -25,6 +25,9 @@ public class Assignment1 {
 	public static int newNode1, newNode2, newLength;
 	public static int lowNode1, lowNode2, lowLength;
 
+	/*
+	 * Function to run modified version of djikstra's
+	 */
 	public static void djikstra(boolean isNew) {
 		int dist[] = new int[citiesCount];
 		int prev[] = new int[citiesCount];
@@ -34,8 +37,7 @@ public class Assignment1 {
 													return (node1.distanceFromSource <= node2.distanceFromSource ? -1 : 1);
 											}});
 		
-		//nodes[source].distanceFromSource = 0;
-		
+		//Initialize the required data 
 		for (int i = 0; i < citiesCount; i++) {
 			dist[i] = Integer.MAX_VALUE;	//distance from source to i;
 			prev[i] = -1;					//previous node in optimal path from source
@@ -49,23 +51,26 @@ public class Assignment1 {
 			nodesQueue.add(nodes[i]);		//Add with priority
 		}
 		
+		//Mark the distance of the source
 		dist[source] = 0;
 		
+		//Iterate through the priority queue, picking the closes node at each point
 		while(nodesQueue.size() != 0){
 			Node temp = nodesQueue.poll();	//Lowest value of of dist array
 			
-			//Find all neighbours of u = vs, v[]
+			//Find all neighbours of the node
 			for(HashMap.Entry<Integer, Link> entry : temp.links.entrySet()) {
 			    int key = entry.getKey();
 			    Link value = entry.getValue();
 			    
+			    //Find the new distance considering this node.
 			    int tempDistance = dist[temp.value] + value.value;
 			    
 			    if(tempDistance < dist[key] && (temp.flag + value.status <= 1)){
 			    	dist[key] = tempDistance;
 			    	prev[key] = temp.value;
 			    	
-			    	//Reduce priority - PQ
+			    	//Reduce priority in the queue
 			    	boolean ret = nodesQueue.remove(nodes[key]);
 			    	if(ret){
 			    		nodes[key].setDistanceFromSource(tempDistance);
@@ -80,6 +85,7 @@ public class Assignment1 {
 		int reached = destination;
 		ArrayList<Integer> listArray = new ArrayList<Integer>();
 		
+		//Check through the path if a new link is used.
 		listArray.add(0, reached);
 		boolean flag = true;
 		while(reached != source){
@@ -337,7 +343,6 @@ public class Assignment1 {
 							}
 						}
 						
-						//nodes[destination].distanceFromSource = Integer.MAX_VALUE;
 						
 						djikstra(true);
 						
@@ -362,7 +367,6 @@ public class Assignment1 {
 						System.out.println("No new link reduces the path");
 					}
 						
-					//djikstra(true);
 					break;
 		
 				default:
